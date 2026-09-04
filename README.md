@@ -16,6 +16,8 @@ npm install --save-dev @abstractplay/ap-deps-tools
 
 Requires GitHub Packages auth for `@abstractplay` scope (same as other AP packages).
 
+Published from [AbstractPlay/ap-deps-tools](https://github.com/AbstractPlay/ap-deps-tools). To release a new version, bump `version` in `package.json` and run the **CI** workflow via **workflow_dispatch** on GitHub (publish job).
+
 ## Commands
 
 ### `ap-install-deps`
