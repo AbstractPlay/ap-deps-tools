@@ -2,9 +2,8 @@ name: CI
 
 on:
   push:
-    branches: [develop, main]
+    branches: [main]
   pull_request:
-  workflow_dispatch:
 
 jobs:
   test:
@@ -20,7 +19,7 @@ jobs:
       - run: npm test
 
   publish:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: test
     runs-on: ubuntu-latest
     permissions:
@@ -34,7 +33,13 @@ jobs:
           registry-url: https://npm.pkg.github.com
           scope: "@abstractplay"
       - run: npm ci
-      - run: npm test
-      - run: npm publish
+      - name: Publish to GitHub Packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view "@abstractplay/ap-deps-tools@${VERSION}" version 2>/dev/null; then
+            echo "Version ${VERSION} already published; skipping."
+            exit 0
+          fi
+          npm publish
