@@ -20,9 +20,7 @@ jobs:
       - run: npm test
 
   publish:
-    if: >
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'))
+    if: github.event_name == 'workflow_dispatch'
     needs: test
     runs-on: ubuntu-latest
     permissions:
