@@ -1,0 +1,43 @@
+{
+  "name": "@abstractplay/ap-deps-tools",
+  "version": "1.0.0",
+  "description": "Install and validate pinned @abstractplay/* dependency versions for AP consumer repos (ci-deps relay)",
+  "type": "module",
+  "main": "lib/index.mjs",
+  "exports": {
+    ".": "./lib/index.mjs",
+    "./lockfile-versions": "./lib/lockfile-versions.mjs"
+  },
+  "bin": {
+    "ap-install-deps": "./cli/install.mjs",
+    "ap-check-ci-deps": "./cli/check.mjs"
+  },
+  "files": [
+    "cli",
+    "lib",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test test/**/*.test.mjs",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AbstractPlay/ap-deps-tools.git"
+  },
+  "author": "Aaron Dalton <aaron@daltons.ca> (https://www.perlkonig.com/)",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24",
+    "npm": ">=11"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.26.0",
+    "eslint": "^9.26.0",
+    "globals": "^16.0.0"
+  }
+}
