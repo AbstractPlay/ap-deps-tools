@@ -23,8 +23,10 @@ Published from [AbstractPlay/ap-deps-tools](https://github.com/AbstractPlay/ap-d
 ### `ap-install-deps`
 
 ```bash
-ap-install-deps --stage dev|prod [--renderer-only] [--for-tests]
+ap-install-deps --stage dev|prod [--renderer-only] [--for-tests] [--bootstrap]
 ```
+
+`--bootstrap` runs `npm ci` after temporarily writing ci-deps versions into `package.json` (required because `0.0.0-managed` placeholders are not on the registry). Also runs automatically on a fresh clone when `node_modules` is missing and placeholders are present.
 
 Resolution order (per package):
 
@@ -70,12 +72,13 @@ Recranks is **not** pinned for front/node-backend (transitive via gameslib).
 ## CI sequence
 
 ```text
-npm ci
+ap-install-deps --stage dev|prod --bootstrap
 ap-check-ci-deps
-ap-install-deps --stage dev|prod
 ap-check-ci-deps --stage dev|prod --strict
 npm test / build / deploy
 ```
+
+Use `npx -p @abstractplay/ap-deps-tools@^1.0.3 ap-install-deps ...` in workflows before the package is in `node_modules`.
 
 ## Programmatic API
 
