@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
 import { describe, it } from "node:test";
 import { getLockfileVersions } from "../lib/lockfile-versions.mjs";
 import { detectProfile } from "../lib/profile.mjs";
 import { resolveVersions } from "../lib/resolve-versions.mjs";
 import { readJson } from "../lib/fs-utils.mjs";
-import { applyRealVersions, hasManagedPlaceholders } from "../lib/install-core.mjs";
-import { PLACEHOLDER_VERSION } from "../lib/constants.mjs";
+import { syncPackageJson } from "../lib/install-core.mjs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -44,8 +45,8 @@ describe("profile", () => {
     const pkgJson = {
       name: "abstractplay-backend-crons",
       dependencies: {
-        "@abstractplay/gameslib": "0.0.0-managed",
-        "@abstractplay/recranks": "0.0.0-managed",
+        "@abstractplay/gameslib": "1.0.0-ci-1.0",
+        "@abstractplay/recranks": "1.0.0-ci-2.0",
       },
     };
     const info = detectProfile(pkgJson);
@@ -92,36 +93,28 @@ describe("resolveVersions", () => {
   });
 });
 
-describe("placeholders", () => {
-  it("detects managed placeholders in package.json", () => {
-    const pkgJson = {
-      dependencies: {
-        "@abstractplay/gameslib": PLACEHOLDER_VERSION,
-        "@abstractplay/renderer": PLACEHOLDER_VERSION,
-      },
-    };
-    assert.equal(
-      hasManagedPlaceholders(pkgJson, [
-        "@abstractplay/gameslib",
-        "@abstractplay/renderer",
-      ]),
-      true,
+describe("syncPackageJson", () => {
+  it("writes exact ci-deps versions into package.json dependencies", () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "ap-deps-sync-"));
+    const pkgPath = path.join(root, "package.json");
+    fs.writeFileSync(
+      pkgPath,
+      JSON.stringify({
+        dependencies: {
+          "@abstractplay/gameslib": "1.0.0-ci-old.0",
+          "@abstractplay/renderer": "1.0.0-ci-old.0",
+        },
+      }),
     );
-  });
-
-  it("writes ci-deps versions for bootstrap npm ci", () => {
-    const pkgJson = {
-      dependencies: {
-        "@abstractplay/gameslib": PLACEHOLDER_VERSION,
-        "@abstractplay/renderer": PLACEHOLDER_VERSION,
-      },
-    };
-    applyRealVersions(pkgJson, {
+    const pkgJson = readJson(pkgPath);
+    syncPackageJson(root, pkgJson, {
       packages: ["@abstractplay/gameslib", "@abstractplay/renderer"],
       gameslib: "1.0.0-ci-100.0",
       renderer: "1.0.0-ci-99.0",
+      profile: "consumer",
     });
-    assert.equal(pkgJson.dependencies["@abstractplay/gameslib"], "1.0.0-ci-100.0");
-    assert.equal(pkgJson.dependencies["@abstractplay/renderer"], "1.0.0-ci-99.0");
+    const written = readJson(pkgPath);
+    assert.equal(written.dependencies["@abstractplay/gameslib"], "1.0.0-ci-100.0");
+    assert.equal(written.dependencies["@abstractplay/renderer"], "1.0.0-ci-99.0");
   });
 });

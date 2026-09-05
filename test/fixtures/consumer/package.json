@@ -1,8 +1,8 @@
-{
-  "name": "abstractplay-front-fixture",
-  "private": true,
-  "dependencies": {
-    "@abstractplay/gameslib": "0.0.0-managed",
-    "@abstractplay/renderer": "0.0.0-managed"
-  }
-}
+{
+  "name": "abstractplay-front-fixture",
+  "private": true,
+  "dependencies": {
+    "@abstractplay/gameslib": "1.0.0-ci-100.0",
+    "@abstractplay/renderer": "1.0.0-ci-99.0"
+  }
+}

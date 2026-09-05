@@ -1,6 +1,6 @@
 {
   "name": "@abstractplay/ap-deps-tools",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Install and validate pinned @abstractplay/* dependency versions for AP consumer repos (ci-deps relay)",
   "type": "module",
   "main": "lib/index.mjs",
