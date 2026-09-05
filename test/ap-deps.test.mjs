@@ -4,6 +4,8 @@ import { getLockfileVersions } from "../lib/lockfile-versions.mjs";
 import { detectProfile } from "../lib/profile.mjs";
 import { resolveVersions } from "../lib/resolve-versions.mjs";
 import { readJson } from "../lib/fs-utils.mjs";
+import { applyRealVersions, hasManagedPlaceholders } from "../lib/install-core.mjs";
+import { PLACEHOLDER_VERSION } from "../lib/constants.mjs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -87,5 +89,39 @@ describe("resolveVersions", () => {
         process.env.AP_GAMESLIB_VERSION = prev;
       }
     }
+  });
+});
+
+describe("placeholders", () => {
+  it("detects managed placeholders in package.json", () => {
+    const pkgJson = {
+      dependencies: {
+        "@abstractplay/gameslib": PLACEHOLDER_VERSION,
+        "@abstractplay/renderer": PLACEHOLDER_VERSION,
+      },
+    };
+    assert.equal(
+      hasManagedPlaceholders(pkgJson, [
+        "@abstractplay/gameslib",
+        "@abstractplay/renderer",
+      ]),
+      true,
+    );
+  });
+
+  it("writes ci-deps versions for bootstrap npm ci", () => {
+    const pkgJson = {
+      dependencies: {
+        "@abstractplay/gameslib": PLACEHOLDER_VERSION,
+        "@abstractplay/renderer": PLACEHOLDER_VERSION,
+      },
+    };
+    applyRealVersions(pkgJson, {
+      packages: ["@abstractplay/gameslib", "@abstractplay/renderer"],
+      gameslib: "1.0.0-ci-100.0",
+      renderer: "1.0.0-ci-99.0",
+    });
+    assert.equal(pkgJson.dependencies["@abstractplay/gameslib"], "1.0.0-ci-100.0");
+    assert.equal(pkgJson.dependencies["@abstractplay/renderer"], "1.0.0-ci-99.0");
   });
 });
