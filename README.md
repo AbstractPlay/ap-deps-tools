@@ -124,7 +124,7 @@ Auto-detected from `package.json`:
 
 | `consumer` | front, node-backend | gameslib, renderer |
 
-| `crons` | backend-crons | gameslib, renderer, recranks |
+| `crons` | node-backend `crons/` workspace (`abstractplay-backend-crons`) | gameslib, renderer, recranks |
 
 | `hub` | gameslib | renderer, recranks |
 
