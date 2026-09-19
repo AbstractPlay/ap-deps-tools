@@ -35,6 +35,24 @@ describe("profile", () => {
     ]);
   });
 
+  it("includes recranks in consumer profile when a direct dependency", () => {
+    const pkgJson = {
+      name: "abstractplay-backend",
+      dependencies: {
+        "@abstractplay/gameslib": "1.0.0-ci-1.0",
+        "@abstractplay/renderer": "1.0.0-ci-2.0",
+        "@abstractplay/recranks": "1.0.0-ci-3.0",
+      },
+    };
+    const info = detectProfile(pkgJson);
+    assert.equal(info.profile, "consumer");
+    assert.deepEqual(info.packages, [
+      "@abstractplay/gameslib",
+      "@abstractplay/renderer",
+      "@abstractplay/recranks",
+    ]);
+  });
+
   it("detects hub profile for gameslib", () => {
     const pkgJson = { name: "@abstractplay/gameslib", dependencies: {} };
     const info = detectProfile(pkgJson);

@@ -122,7 +122,7 @@ Auto-detected from `package.json`:
 
 |---------|---------------|-----------------|
 
-| `consumer` | front, node-backend | gameslib, renderer |
+| `consumer` | front, node-backend | gameslib, renderer; **+ recranks** when listed in `dependencies` (node-backend monorepo) |
 
 | `crons` | node-backend `crons/` workspace (`abstractplay-backend-crons`) | gameslib, renderer, recranks |
 
